@@ -12,9 +12,6 @@ use Nette\Http\IResponse;
 class NetteApplicationModule extends Framework
 {
 
-	/** @var NetteConnector */
-	public $client;
-
 	/** @var mixed[] */
 	protected $config = [
 		'followRedirects' => true,
@@ -61,11 +58,19 @@ class NetteApplicationModule extends Framework
 
 	public function followRedirects(bool $followRedirects): void
 	{
+		if ($this->client === null) {
+			$this->fail('Client is not set');
+		}
+
 		$this->client->followRedirects($followRedirects);
 	}
 
 	public function seeRedirectTo(string $url): void
 	{
+		if ($this->client === null) {
+			$this->fail('Client is not set');
+		}
+
 		if ($this->client->isFollowingRedirects()) {
 			$this->fail('Method seeRedirectTo only works when followRedirects option is disabled');
 		}
@@ -81,6 +86,10 @@ class NetteApplicationModule extends Framework
 
 	public function debugContent(): void
 	{
+		if ($this->client === null) {
+			$this->fail('Client is not set');
+		}
+
 		$this->debugSection('Content', $this->client->getInternalResponse()->getContent());
 	}
 
